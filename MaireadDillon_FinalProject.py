@@ -162,7 +162,6 @@ predicted = neural_net.predict(X_test)
 print(training_error)
 print(predicted)
 
-
 # plt.plot(training_error)
 # plt.xlabel("Iterations")
 # plt.ylabel("Error for all training instances")
