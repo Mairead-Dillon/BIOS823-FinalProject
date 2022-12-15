@@ -1,4 +1,4 @@
-"""Creating a neural network to predictor diabetes on a variety of predictor variables."""
+"""Creating a neural network to predict whether or not a patient has diabetes using a variety of predictor variables."""
 
 # Import libraries
 import pandas as pd
@@ -76,12 +76,13 @@ class Neural_Network:
         """Function to predict the outcomes using the initial weights and bias."""
         layer1 = np.dot(input_vector, self.weights) + self.bias
         layer2 = self.sigmoid(layer1)
-        for i in layer2:
-            if i > 0.5:
-                prediction = 1
-            else:
-                prediction = 0
-        return prediction
+        prediction = layer2
+        predict = []
+        if prediction > 0.5:
+            predict.append(1)
+        else:
+            predict.append(0)
+        return predict
 
     def compute_gradients(self, input_vector, target):
         """Function to compute vector gradients."""
