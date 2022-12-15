@@ -4,6 +4,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn import metrics
 import matplotlib.pyplot as plt
 
 # Read csv
@@ -77,12 +78,12 @@ class Neural_Network:
         layer1 = np.dot(input_vector, self.weights) + self.bias
         layer2 = self.sigmoid(layer1)
         prediction = layer2
-        predict = []
-        if prediction > 0.5:
-            predict.append(1)
-        else:
-            predict.append(0)
-        return predict
+        # predict = []
+        # if prediction > 0.5:
+        #     predict.append(1)
+        # else:
+        #     predict.append(0)
+        return prediction
 
     def compute_gradients(self, input_vector, target):
         """Function to compute vector gradients."""
@@ -90,18 +91,24 @@ class Neural_Network:
         layer2 = self.sigmoid(layer1)
         prediction = layer2
 
+        # Take the derivative of the error with respect to the prediction
         derror_dprediction = 2 * (prediction - target)
+        # Take the derivative of the prediction with respect to layer 1
         dprediction_dlayer1 = self.sigmoid_derivative(layer1)
+        # Take the derivative of layer 1 with respect to the bias
         dlayer1_dbias = 1
+        # Take the derivative of layer 1 with respect to the initial weights
         dlayer1_dweights = (0 * self.weights) + (1 * input_vector)
 
+        # Take the derivative of the error with respect to the bias
         derror_dbias = derror_dprediction * dprediction_dlayer1 * dlayer1_dbias
+        # Take the derivative of the error with respect to the weights
         derror_dweights = derror_dprediction * dprediction_dlayer1 * dlayer1_dweights
 
         return derror_dbias, derror_dweights
 
     def update_parameters(self, derror_dbias, derror_dweights):
-        """Function to update the bias and weights."""
+        """Function to update the bias and weights using backpropagation."""
         self.bias = self.bias - (derror_dbias * self.learning_rate)
         self.weights = self.weights - (derror_dweights * self.learning_rate)
 
@@ -150,9 +157,13 @@ neural_net = Neural_Network(8, 0.5)
 
 training_error = neural_net.train(X_train, y_train, 10000)
 
-print(neural_net.predict(X_train))
+predicted = neural_net.predict(X_test)
 
-plt.plot(training_error)
-plt.xlabel("Iterations")
-plt.ylabel("Error for all training instances")
-plt.savefig("Cumulative_Error.png")
+print(training_error)
+print(predicted)
+
+
+# plt.plot(training_error)
+# plt.xlabel("Iterations")
+# plt.ylabel("Error for all training instances")
+# plt.savefig("Cumulative_Error.png")
