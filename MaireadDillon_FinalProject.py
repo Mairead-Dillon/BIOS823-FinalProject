@@ -158,9 +158,6 @@ for i in predicted:
     else:
         predictions.append(0)
 
-# print(training_error)
-print(predictions)
-
 # Find and print confusion matrix
 confusion_mat = confusion_matrix(y_test, predictions)
 print(confusion_mat)
@@ -225,11 +222,9 @@ neural_net1 = Neural_Network(10, 0.1)
 
 # Find training error
 training_error1 = neural_net1.train(X_train1, y_train1, 10000)
-print(training_error1)
 
 # Predict on test dataset
 predicted1 = neural_net1.predict(X_test1)
-print(predicted1)
 
 # Create empty array to input prediction values into
 predictions1 = []
