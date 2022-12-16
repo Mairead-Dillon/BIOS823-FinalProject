@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
 # Read csv
@@ -74,15 +76,10 @@ class Neural_Network:
         return self.sigmoid(x) * (1 - self.sigmoid(x))
 
     def predict(self, input_vector):
-        """Function to predict the outcomes using the initial weights and bias."""
+        """Function to predict the outcomes using the  weights and bias."""
         layer1 = np.dot(input_vector, self.weights) + self.bias
         layer2 = self.sigmoid(layer1)
         prediction = layer2
-        # predict = []
-        # if prediction > 0.5:
-        #     predict.append(1)
-        # else:
-        #     predict.append(0)
         return prediction
 
     def compute_gradients(self, input_vector, target):
@@ -153,16 +150,41 @@ input_vectors = np.array(
 
 targets = np.array([0, 1, 0, 1, 0, 1, 1, 0])
 
-neural_net = Neural_Network(8, 0.5)
+neural_net = Neural_Network(8, 0.1)
 
 training_error = neural_net.train(X_train, y_train, 10000)
 
 predicted = neural_net.predict(X_test)
 
-print(training_error)
-print(predicted)
+predictions = []
+
+# Use probabilities to predict outcome as 0s and 1s
+for i in predicted:
+    if i >= 0.5:
+        predictions.append(1)
+    else:
+        predictions.append(0)
+
+# print(training_error)
+print(predictions)
+
+# Find and print confusion matrix
+confusion_mat = confusion_matrix(y_test, predictions)
+print(confusion_mat)
+
+# Find and print accuracy
+accuracy = accuracy_score(y_test, predictions)
+print(accuracy)
 
 # plt.plot(training_error)
 # plt.xlabel("Iterations")
 # plt.ylabel("Error for all training instances")
 # plt.savefig("Cumulative_Error.png")
+
+# Import new dataset
+cancer = pd.read_csv(
+    "/Users/maireaddillon/Documents/Duke/BIOS-823/BIOS823-FinalProject/breast-cancer.csv"
+)
+
+# Drop the ID column
+cancer = cancer.drop("id")
