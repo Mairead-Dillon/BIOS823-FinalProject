@@ -1,6 +1,6 @@
 # BIOS823-FinalProject
 GitHub repository for the BIOSTAT 823 final project.
 
-The code contained in this GitHub repository trains a neural network with two layers. The first data set trained and tested on using the neural network predicts whether or not a patient has diabetes based on the patient's number of prior pregnancies, glucose level in blood, blood pressure measurement, thickness of skin, insulin level in blood, body mass index, diabetes percentage, and age.
+The code contained in this GitHub repository trains a neural network with two layers. The first data set trained and tested on using the neural network predicts whether or not a patient has diabetes based on the patient's number of prior pregnancies, glucose level in blood, blood pressure measurement, thickness of skin, insulin level in blood, body mass index, diabetes percentage, and age. The second data set used by the neural network predicts whether a patient's breast cancer tumor was malignant or benign using the following tumor characteristics as predictors: mean of radius, mean of texture, mean of perimeter, mean of area, mean of smoothness, mean of compactness, mean of concavity, mean of concave points, mean of symmetry, and mean of fractal dimension. A class with 6 functions is created to build the neural network.
 
-To use this code the pandas and numpy libraries must be imported into python.
+To use this code the pandas, numpy, sklearn, and matplotlib libraries must be imported into python.
