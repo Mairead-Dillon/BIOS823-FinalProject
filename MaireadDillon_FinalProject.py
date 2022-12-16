@@ -14,23 +14,8 @@ diabetes = pd.read_csv(
     "/Users/maireaddillon/Documents/Duke/BIOS-823/BIOS823-FinalProject/diabetes.csv"
 )
 
-
-# Create normalization function
-def normalize(df):
-    """Create a function to normalize the predictor variables. Note that this function assumes that the data has 8 predictor variables and 1 outcome variable."""
-    result = df.copy()
-    for col in df.columns[0:8]:
-        max_value = df[col].max()
-        min_value = df[col].min()
-        result[col] = (df[col] - min_value) / (max_value - min_value)
-    return result
-
-
-# Save normalized diabetes dataframe
-diabetes_normalized = normalize(diabetes)
-
 # Split variables into predictors (X) and outcome (y)
-X = diabetes_normalized[
+predictor_vars = diabetes[
     [
         "Pregnancies",
         "Glucose",
@@ -42,7 +27,21 @@ X = diabetes_normalized[
         "Age",
     ]
 ]
-y = diabetes_normalized["Outcome"]
+y = diabetes["Outcome"]
+
+# Create normalization function
+def normalize(df):
+    """Create a function to normalize the predictor variables."""
+    result = df.copy()
+    for col in df.columns:
+        max_value = df[col].max()
+        min_value = df[col].min()
+        result[col] = (df[col] - min_value) / (max_value - min_value)
+    return result
+
+
+# Save normalized diabetes predictors dataframe
+X = normalize(predictor_vars)
 
 # Split the dataframe into a training set and testing set
 X_train, X_test, y_train, y_test = train_test_split(
@@ -55,9 +54,7 @@ X_test = X_test.to_numpy()
 y_train = y_train.to_numpy()
 y_test = y_test.to_numpy()
 
-# self.weights = (np.random.randint(0, 10, size=(len(input_vector))) / 100) + 0.001
-
-
+# Create Neural Network class
 class Neural_Network:
     def __init__(self, num_nodes_in, learning_rate):
         self.weights = np.array(
@@ -142,20 +139,16 @@ class Neural_Network:
         return cumulative_errors
 
 
-# print(neural_net.train(train.columns[0:2], train.columns[8], 10000))
-
-input_vectors = np.array(
-    [[3, 1.5], [2, 1], [4, 1.5], [3, 4], [3.5, 0.5], [2, 0.5], [5.5, 1], [1, 1]]
-)
-
-targets = np.array([0, 1, 0, 1, 0, 1, 1, 0])
-
+# Run neural network for diabetes data
 neural_net = Neural_Network(8, 0.1)
 
+# Find training error
 training_error = neural_net.train(X_train, y_train, 10000)
 
+# Predict using test data
 predicted = neural_net.predict(X_test)
 
+# Create empty array to input predictions
 predictions = []
 
 # Use probabilities to predict outcome as 0s and 1s
@@ -176,10 +169,12 @@ print(confusion_mat)
 accuracy = accuracy_score(y_test, predictions)
 print(accuracy)
 
-# plt.plot(training_error)
-# plt.xlabel("Iterations")
-# plt.ylabel("Error for all training instances")
-# plt.savefig("Cumulative_Error.png")
+# Plot training error
+plt.plot(training_error)
+plt.xlabel("Iterations")
+plt.ylabel("Error for all training instances")
+plt.title("Training Error for Diabetes Data")
+plt.savefig("Cumulative_Error.png")
 
 # Import new dataset
 cancer = pd.read_csv(
@@ -187,4 +182,76 @@ cancer = pd.read_csv(
 )
 
 # Drop the ID column
-cancer = cancer.drop("id")
+cancer1 = cancer.drop(["id"], axis=1)
+
+# Create predictors data frame using mean values for different measurements
+X1 = cancer1[
+    [
+        "radius_mean",
+        "texture_mean",
+        "perimeter_mean",
+        "area_mean",
+        "smoothness_mean",
+        "compactness_mean",
+        "concavity_mean",
+        "concave points_mean",
+        "symmetry_mean",
+        "fractal_dimension_mean",
+    ]
+]
+
+# Change outcome to binary and create outcome vector
+y1 = pd.get_dummies(cancer1["diagnosis"])
+
+# Remove benign column from y1 so that M=1 and B=0
+y1 = y1.drop(["B"], axis=1)
+
+# Normalize
+X1_normalized = normalize(X1)
+
+# Split cancer data into training and testing set
+X_train1, X_test1, y_train1, y_test1 = train_test_split(
+    X1_normalized, y1, random_state=123, test_size=0.2
+)
+
+# Convert data to numpy arrays to use in the neural network
+X_train1 = X_train1.to_numpy()
+X_test1 = X_test1.to_numpy()
+y_train1 = y_train1.to_numpy()
+y_test1 = y_test1.to_numpy()
+
+# Run neural network for cancer data
+neural_net1 = Neural_Network(10, 0.1)
+
+# Find training error
+training_error1 = neural_net1.train(X_train1, y_train1, 10000)
+print(training_error1)
+
+# Predict on test dataset
+predicted1 = neural_net1.predict(X_test1)
+print(predicted1)
+
+# Create empty array to input prediction values into
+predictions1 = []
+
+# Use probabilities to predict outcome as 0s and 1s
+for i in predicted1:
+    if i >= 0.5:
+        predictions1.append(1)
+    else:
+        predictions1.append(0)
+
+# Find and print confusion matrix
+confusion_mat1 = confusion_matrix(y_test1, predictions1)
+print(confusion_mat1)
+
+# Find and print accuracy
+accuracy1 = accuracy_score(y_test1, predictions1)
+print(accuracy1)
+
+# Plot and save graph of training error
+plt.plot(training_error1)
+plt.xlabel("Iterations")
+plt.ylabel("Error for all training instances")
+plt.title("Training Error for Breast Cancer Data")
+plt.savefig("Cumulative_Error1.png")
